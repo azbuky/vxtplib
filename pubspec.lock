@@ -266,7 +266,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.0"
+    version: "4.7.0"
   json_converter:
     dependency: transitive
     description:
@@ -287,7 +287,7 @@ packages:
       name: json_serializable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.3.1"
+    version: "6.4.1"
   lints:
     dependency: "direct dev"
     description:
@@ -462,7 +462,7 @@ packages:
       name: stream_channel
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   stream_transform:
     dependency: transitive
     description:
@@ -529,9 +529,9 @@ packages:
   vite:
     dependency: "direct main"
     description:
-      path: "../../vite_dart"
-      relative: true
-    source: path
+      name: vite
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.3.0"
   vm_service:
     dependency: transitive
