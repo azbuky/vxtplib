@@ -184,7 +184,9 @@ class Tokens with _$Tokens {
     return decimals;
   }
 
-  TokenInfo? getInfoForTokenSymbol(String tokenSymbol) {
+  TokenInfo? infoForToken(Token token) => tokenMap[token.tokenId];
+
+  TokenInfo? infoForTokenSymbol(String tokenSymbol) {
     try {
       return tokenMap.values
           .firstWhere((info) => info.symbolLabel == tokenSymbol);
@@ -193,8 +195,8 @@ class Tokens with _$Tokens {
     }
   }
 
-  String? getTokenIdForTokenSymbol(String tokenSymbol) =>
-      getInfoForTokenSymbol(tokenSymbol)?.tokenId;
+  String? tokenIdForTokenSymbol(String tokenSymbol) =>
+      infoForTokenSymbol(tokenSymbol)?.tokenId;
 }
 
 @freezed
@@ -439,20 +441,22 @@ class OrderLog with _$OrderLog {
 
   static Decimal calculateRawQuantity(
       Decimal amount, Decimal price, int decimalsDiff) {
-    final rawAmount = (amount / price).toDecimal(scaleOnInfinitePrecision: 18);
+    final rawAmount = (amount / price)
+        .toDecimal(scaleOnInfinitePrecision: decimalsDiff.abs());
     if (decimalsDiff == 0) {
       return rawAmount;
     }
     if (decimalsDiff > 0) {
-      return rawAmount * BigInt.from(10).pow(decimalsDiff).toDecimal();
+      return (rawAmount * BigInt.from(10).pow(decimalsDiff).toDecimal())
+          .truncate();
     }
     return (rawAmount / BigInt.from(10).pow(decimalsDiff.abs()).toDecimal())
-        .toDecimal(scaleOnInfinitePrecision: 18);
+        .toDecimal(scaleOnInfinitePrecision: 0);
   }
 
   static Decimal calculateRawAmount(
       Decimal quantity, Decimal price, int decimalsDiff) {
-    return adjustForDecimalsDiff(quantity * price, decimalsDiff);
+    return adjustForDecimalsDiff(quantity * price, decimalsDiff).truncate();
   }
 
   static Decimal adjustForDecimalsDiff(Decimal sourceAmount, int decimalsDiff) {
@@ -653,11 +657,11 @@ class MarketOrderParam with _$MarketOrderParam {
 }
 
 @freezed
-class RecoverResult with _$RecoverResult {
-  const factory RecoverResult({
+class RecoverResults with _$RecoverResults {
+  const factory RecoverResults({
     required OrderBooks orderBooks,
     required BlockEventStream stream,
-  }) = _RecoverResult;
+  }) = _RecoverResults;
 }
 
 @freezed
@@ -670,14 +674,15 @@ class RestingOrder with _$RestingOrder {
     required Decimal quantity,
     required Decimal price,
     required OrderSide side,
-    required int startTime,
-    required int endTime,
+    required int startTimestamp,
+    required int endTimestamp,
   }) = _RestingOrder;
 
   factory RestingOrder.atEvent({
     required OrderModel order,
     required OrderLog log,
-    required int eventTimestmap,
+    required int startTimestamp,
+    required int eventTimestamp,
   }) =>
       RestingOrder(
         address: order.address,
@@ -687,12 +692,13 @@ class RestingOrder with _$RestingOrder {
         quantity: log.changeQuantity,
         price: log.price,
         side: log.side ? OrderSide.sell : OrderSide.buy,
-        startTime: order.timestamp,
-        endTime: eventTimestmap,
+        startTimestamp: startTimestamp,
+        endTimestamp: eventTimestamp,
       );
 
   factory RestingOrder.atEnd({
     required OrderModel order,
+    required int startTimestamp,
     required int endTimestamp,
   }) =>
       RestingOrder(
@@ -703,8 +709,8 @@ class RestingOrder with _$RestingOrder {
         quantity: order.quantity,
         price: order.price,
         side: order.side ? OrderSide.sell : OrderSide.buy,
-        startTime: order.timestamp,
-        endTime: endTimestamp,
+        startTimestamp: startTimestamp,
+        endTimestamp: endTimestamp,
       );
 
   factory RestingOrder.fromJson(Map<String, dynamic> json) =>
@@ -766,4 +772,199 @@ class UserTrade with _$UserTrade {
 
   factory UserTrade.fromJson(Map<String, dynamic> json) =>
       _$UserTradeFromJson(json);
+}
+
+@freezed
+class RewardsConfig with _$RewardsConfig {
+  @JsonSerializable(includeIfNull: true)
+  const factory RewardsConfig({
+    String? seedPhrase,
+    required Token rewardToken,
+    required Decimal tradingReward,
+    required Decimal limitOrderReward,
+    required Decimal orderDistanceThreshold,
+    required String tradingPair,
+  }) = _RewardsConfig;
+
+  factory RewardsConfig.fromJson(Map<String, dynamic> json) =>
+      _$RewardsConfigFromJson(json);
+}
+
+@freezed
+class RewardsTotal with _$RewardsTotal {
+  const factory RewardsTotal({
+    required Decimal tradingReward,
+    required Decimal limitOrderReward,
+    required Decimal totalReward,
+  }) = _RewardsTotal;
+
+  factory RewardsTotal.fromJson(Map<String, dynamic> json) =>
+      _$RewardsTotalFromJson(json);
+}
+
+@freezed
+class TimeRange with _$TimeRange {
+  const TimeRange._();
+
+  const factory TimeRange({
+    @JsonKey(name: 'stime') required DateTime startTime,
+    @JsonKey(name: 'etime') required DateTime endTime,
+  }) = _TimeRange;
+
+  factory TimeRange.timestamps({
+    required int start,
+    required int end,
+  }) =>
+      TimeRange(
+        startTime: DateTime.fromMillisecondsSinceEpoch(
+          start * 1000,
+          isUtc: true,
+        ),
+        endTime: DateTime.fromMillisecondsSinceEpoch(
+          end * 1000,
+          isUtc: true,
+        ),
+      );
+
+  factory TimeRange.fromJson(Map<String, dynamic> json) =>
+      _$TimeRangeFromJson(json);
+
+  int get startTimestamp => startTime.millisecondsSinceEpoch ~/ 1000;
+  int get endTimestamp => endTime.millisecondsSinceEpoch ~/ 1000;
+}
+
+enum CycleType {
+  period,
+  hour,
+  day,
+}
+
+@freezed
+class Cycle with _$Cycle {
+  const Cycle._();
+  const factory Cycle({
+    required int index,
+    required CycleType type,
+    required TimeRange timeRange,
+  }) = _Cycle;
+
+  factory Cycle.period({
+    required int start,
+    required int end,
+  }) =>
+      Cycle(
+        index: 0,
+        type: CycleType.period,
+        timeRange: TimeRange.timestamps(start: start, end: end),
+      );
+
+  factory Cycle.fromJson(Map<String, dynamic> json) => _$CycleFromJson(json);
+
+  DateTime get startTime => timeRange.startTime;
+  DateTime get endTime => timeRange.endTime;
+
+  int get start => timeRange.startTimestamp;
+  int get end => timeRange.endTimestamp;
+}
+
+@freezed
+class MarketResults with _$MarketResults {
+  const factory MarketResults({
+    required TradePair tradePair,
+    required List<UserTrade> userTrades,
+    required List<RestingOrder> restingOrders,
+  }) = _MarketResults;
+
+  factory MarketResults.fromJson(Map<String, dynamic> json) =>
+      _$MarketResultsFromJson(json);
+}
+
+@freezed
+class ScanResults with _$ScanResults {
+  const factory ScanResults({
+    required Cycle cycle,
+    required Map<String, MarketResults> markets,
+  }) = _ScanResults;
+
+  factory ScanResults.fromJson(Map<String, dynamic> json) =>
+      _$ScanResultsFromJson(json);
+}
+
+@unfreezed
+class RestingOrderStats with _$RestingOrderStats {
+  factory RestingOrderStats({
+    required final RestingOrder restingOrder,
+    required int deltaTimestamp,
+    required int qualifyingTimeLength,
+  }) = _RestingOrderStats;
+}
+
+@freezed
+class QualifyingOrder with _$QualifyingOrder {
+  const QualifyingOrder._();
+  const factory QualifyingOrder({
+    required RestingOrder order,
+    required Decimal weight,
+  }) = _QualifyingOrder;
+
+  String get address => order.address;
+  Decimal get amount => order.amount;
+}
+
+@freezed
+class UserReward with _$UserReward {
+  const factory UserReward({
+    required String address,
+    required Decimal tradingReward,
+    required Decimal limitOrdersReward,
+    required Decimal totalReward,
+  }) = _UserReward;
+
+  factory UserReward.create({
+    required String address,
+    required Decimal trading,
+    required Decimal limitOrders,
+  }) =>
+      UserReward(
+        address: address,
+        tradingReward: trading,
+        limitOrdersReward: limitOrders,
+        totalReward: trading + limitOrders,
+      );
+
+  factory UserReward.fromJson(Map<String, dynamic> json) =>
+      _$UserRewardFromJson(json);
+}
+
+@freezed
+class CycleRewards with _$CycleRewards {
+  const factory CycleRewards({
+    required Cycle cycle,
+    required RewardsConfig config,
+    required RewardsTotal totalRewards,
+    required List<UserReward> rewards,
+  }) = _CycleRewards;
+
+  factory CycleRewards.fromJson(Map<String, dynamic> json) =>
+      _$CycleRewardsFromJson(json);
+}
+
+@freezed
+class SendLog with _$SendLog {
+  const factory SendLog.succeeded(Hash hash) = _SendLogSucceeded;
+  const factory SendLog.failed(String error) = _SendLogFailed;
+
+  factory SendLog.fromJson(Map<String, dynamic> json) =>
+      _$SendLogFromJson(json);
+}
+
+@freezed
+class DistributionLog with _$DistributionLog {
+  const factory DistributionLog({
+    required CycleRewards rewards,
+    required Map<String, SendLog> logs,
+  }) = _DistributionLog;
+
+  factory DistributionLog.fromJson(Map<String, dynamic> json) =>
+      _$DistributionLogFromJson(json);
 }

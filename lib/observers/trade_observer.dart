@@ -1,10 +1,12 @@
+import 'dart:math';
+
 import '../orderbook/order_book.dart';
 import '../orderbook/order_event_handle_observer.dart';
 import '../types.dart';
 
 class TradeObserver extends OrderEventHandleObserver {
-  final int startTime;
-  final int endTime;
+  final int startTimestamp;
+  final int endTimestamp;
 
   final restingOrdersMap = <String, List<RestingOrder>>{};
   final userTradesMap = <String, List<UserTrade>>{};
@@ -15,7 +17,10 @@ class TradeObserver extends OrderEventHandleObserver {
   List<UserTrade> userTradesForTradePair(String tradePair) =>
       userTradesMap.putIfAbsent(tradePair, () => <UserTrade>[]);
 
-  TradeObserver({required this.startTime, required this.endTime});
+  TradeObserver({
+    required this.startTimestamp,
+    required this.endTimestamp,
+  });
 
   void _logRestingOrder(RestingOrder order) =>
       restingOrdersForTradePair(order.tradePair).add(order);
@@ -23,12 +28,13 @@ class TradeObserver extends OrderEventHandleObserver {
   void _logUserTrade(UserTrade trade) =>
       userTradesForTradePair(trade.tradePair).add(trade);
 
+  // handle open orders at endTime
   void end(OrderBook book, String tradePair) {
-    // handle open orders at endTime
     for (final order in book.orders.values) {
       final resting = RestingOrder.atEnd(
         order: order,
-        endTimestamp: endTime,
+        startTimestamp: max(startTimestamp, order.timestamp),
+        endTimestamp: endTimestamp,
       );
       _logRestingOrder(resting);
     }
@@ -45,7 +51,7 @@ class TradeObserver extends OrderEventHandleObserver {
       throw Exception('Event timestamp is null - $event');
     }
 
-    if (timestamp > endTime) {
+    if (timestamp > endTimestamp) {
       throw Exception('Event timestamp is greater than end time');
     }
 
@@ -113,7 +119,8 @@ class TradeObserver extends OrderEventHandleObserver {
             final resting = RestingOrder.atEvent(
               order: order,
               log: log,
-              eventTimestmap: timestamp,
+              startTimestamp: max(startTimestamp, order.timestamp),
+              eventTimestamp: timestamp,
             );
             _logRestingOrder(resting);
           },
@@ -129,7 +136,8 @@ class TradeObserver extends OrderEventHandleObserver {
             final resting = RestingOrder.atEvent(
               order: order,
               log: log,
-              eventTimestmap: timestamp,
+              startTimestamp: max(startTimestamp, order.timestamp),
+              eventTimestamp: timestamp,
             );
             _logRestingOrder(resting);
           },
@@ -137,7 +145,8 @@ class TradeObserver extends OrderEventHandleObserver {
             final resting = RestingOrder.atEvent(
               order: order,
               log: log,
-              eventTimestmap: timestamp,
+              startTimestamp: max(startTimestamp, order.timestamp),
+              eventTimestamp: timestamp,
             );
             _logRestingOrder(resting);
           },

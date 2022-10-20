@@ -13,14 +13,16 @@ import 'order_book.dart';
 import 'order_books.dart';
 
 class TradeRecover {
-  Future<RecoverResult> recoverInTime({
+  Future<RecoverResults> recoverInTime({
     required OrderBooks orderBooks,
     required int time,
     required Tokens tokens,
     required VitexService vitex,
   }) async {
-    final startHeight = await vitex.getChainHeightByAddressAndTime(
-            kDexTradeContractAddress, time) +
+    final startHeight = await vitex.getSnapshotHeightFor(
+          address: kDexTradeContractAddress,
+          timestamp: time,
+        ) +
         1;
     final endHeight = orderBooks.currentHeight - 1;
     final stream = BlockEventStream(
@@ -37,14 +39,14 @@ class TradeRecover {
     );
   }
 
-  RecoverResult recoverInTimeWithStream({
+  RecoverResults recoverInTimeWithStream({
     required OrderBooks orderBooks,
     required BlockEventStream stream,
     required Tokens tokens,
     required VitexService vitex,
   }) {
     stream.travel(orderBooks, inReverse: true);
-    final result = RecoverResult(orderBooks: orderBooks, stream: stream);
+    final result = RecoverResults(orderBooks: orderBooks, stream: stream);
     return result;
   }
 
@@ -84,7 +86,7 @@ class TradeRecover {
     required List<OrderModel> orders,
     required VitexService vitex,
   }) async {
-    int start = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+    int start = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     int end = 0;
     var orderMap = Map.fromEntries(orders.map((e) {
       start = min(start, e.timestamp);
@@ -147,10 +149,14 @@ class TradeRecover {
     required int endTime,
     required VitexService vitex,
   }) async {
-    final startHeight = await vitex.getChainHeightByAddressAndTime(
-        kDexTradeContractAddress, startTime);
-    final endHeight = await vitex.getChainHeightByAddressAndTime(
-        kDexTradeContractAddress, endTime);
+    final startHeight = await vitex.getSnapshotHeightFor(
+      address: kDexTradeContractAddress,
+      timestamp: startTime,
+    );
+    final endHeight = await vitex.getSnapshotHeightFor(
+      address: kDexTradeContractAddress,
+      timestamp: endTime,
+    );
     final vmLogMessages = await vitex.getChainEventsByHeightRange(
       address: kDexTradeContractAddress,
       startHeight: startHeight,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:decimal/decimal.dart';
@@ -90,4 +92,82 @@ bool getOrderSideByParseOrderId(Uint8List bytes) {
     throw Exception('Invalid order id bytes');
   }
   return bytes[3] == 1;
+}
+
+RpcService getServiceForNodeUri(String node) {
+  final RpcService service;
+  if (node.startsWith('http')) {
+    service = HttpService(node);
+  } else if (node.startsWith('ws')) {
+    service = WsService(node);
+  } else {
+    service = IpcService(node);
+  }
+  return service;
+}
+
+RewardsConfig getRewardsConfig(String path) {
+  try {
+    final file = File(path);
+    final data = file.readAsStringSync();
+
+    final jsonData = json.decode(data);
+    final config = RewardsConfig.fromJson(jsonData);
+    return config;
+  } catch (e) {
+    throw Exception('Failed to read config at path $path');
+  }
+}
+
+int? tryParseTime(String time) {
+  final timestamp = int.tryParse(time);
+  if (timestamp != null) {
+    return timestamp;
+  }
+
+  final date = DateTime.tryParse(time);
+  if (date != null) {
+    return date.millisecondsSinceEpoch ~/ 1000;
+  }
+
+  return null;
+}
+
+Token? tryParseTokenId(String tokenId) => Token.tryParse(tokenId);
+
+Decimal? tryParseDecimal(String source) => Decimal.tryParse(source);
+
+List<TradePair> getTradePairs(List<String> tradeSymbolPairs, Tokens tokens) {
+  final tradePairs = <TradePair>[];
+  for (final symbolPair in tradeSymbolPairs) {
+    final parts = symbolPair.split('_');
+    if (parts.length != 2) {
+      throw Exception('Failed to parse trade pair $symbolPair');
+    }
+    final tradeTokenSymbol = parts.first;
+    final quoteTokenSymbol = parts.last;
+
+    final tradeTokenInfo = tokens.infoForTokenSymbol(tradeTokenSymbol);
+    final quoteTokenInfo = tokens.infoForTokenSymbol(quoteTokenSymbol);
+
+    if (tradeTokenInfo == null) {
+      throw Exception('Unknown trade token symbol $tradeTokenSymbol');
+    }
+
+    if (quoteTokenInfo == null) {
+      throw Exception('Unknown quote token symbol $quoteTokenSymbol');
+    }
+
+    final tradePair = TradePair(
+      tradeTokenInfo: tradeTokenInfo,
+      quoteTokenInfo: quoteTokenInfo,
+    );
+
+    if (tradePair.getMarket() == 0) {
+      throw Exception(
+          'Unknown market for quote token symbol $quoteTokenSymbol.\nAvailable options VITE, ETH-000, BTC-000, USDT-000.');
+    }
+    tradePairs.add(tradePair);
+  }
+  return tradePairs;
 }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'types.dart';
-import 'vitex/trade_observer.dart';
 
 Future<void> writeToFile({
   required String path,
@@ -17,7 +16,6 @@ String csvForUserTrades(List<UserTrade> trades) {
   final buffer = StringBuffer();
   final header = [
     'Timestamp',
-    'TradePair',
     'Address',
     'Amount',
     'Quantity',
@@ -32,14 +30,13 @@ String csvForUserTrades(List<UserTrade> trades) {
   for (final trade in trades) {
     final items = [
       trade.timestamp,
-      trade.tradePair,
       trade.address,
       trade.amount,
       trade.quantity,
       trade.price,
       trade.orderId,
-      trade.orderSide,
-      trade.traderSide,
+      trade.orderSide.name,
+      trade.traderSide.name,
       trade.blockHash,
     ];
     buffer.writeln(items.join(','));
@@ -63,14 +60,14 @@ String csvForRestingOrders(List<RestingOrder> orders) {
   buffer.writeln(header);
   for (final order in orders) {
     final items = [
-      order.startTime,
-      order.endTime,
+      order.startTimestamp,
+      order.endTimestamp,
       order.address,
       order.amount,
       order.quantity,
       order.price,
       order.orderId,
-      order.side,
+      order.side.name,
     ];
     buffer.writeln(items.join(','));
   }
@@ -78,26 +75,7 @@ String csvForRestingOrders(List<RestingOrder> orders) {
   return buffer.toString();
 }
 
-String jsonResults({
-  required TradeObserver tradeObserver,
-  required List<TradePair> tradePairs,
-}) {
-  final results = <String, dynamic>{};
-
-  for (final pair in tradePairs) {
-    final result = <String, dynamic>{};
-
-    final restingOrders =
-        tradeObserver.restingOrdersForTradePair(pair.tradePairId);
-    final userTrades = tradeObserver.userTradesForTradePair(pair.tradePairId);
-
-    result['tradePairSymbols'] = pair.tradePairSymbols;
-    result['restingOrders'] = restingOrders.map((e) => e.toJson()).toList();
-    result['userTrades'] = userTrades.map((e) => e.toJson()).toList();
-
-    results[pair.tradePairId] = result;
-  }
-
+String prettyPrintJson(Map<String, dynamic> json) {
   final encoder = JsonEncoder.withIndent('  ');
-  return encoder.convert(results);
+  return encoder.convert(json);
 }

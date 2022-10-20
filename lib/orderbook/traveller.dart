@@ -6,7 +6,7 @@ import 'order_books.dart';
 
 class Traveller {
   Future<OrderBooks> travelInTime({
-    required int prevTime,
+    required int prevTimestamp,
     required Tokens tokens,
     required VitexService vitex,
     required List<TradePair> tradePairs,
@@ -20,12 +20,16 @@ class Traveller {
       candidates.add(orderBooks);
     }
 
-    final startHeight = await vitex.getChainHeightByAddressAndTime(
-        kDexTradeContractAddress, prevTime);
+    final startHeight = await vitex.getSnapshotHeightFor(
+      address: kDexTradeContractAddress,
+      timestamp: prevTimestamp,
+    );
     final endHeight =
         await vitex.getLatestAccountBlockHeight(kDexTradeContractAddress);
-    final stream =
-        BlockEventStream(startHeight: startHeight, endHeight: endHeight);
+    final stream = BlockEventStream(
+      startHeight: startHeight,
+      endHeight: endHeight,
+    );
     await stream.init(vitex: vitex, tokens: tokens);
 
     for (final candidate in candidates) {

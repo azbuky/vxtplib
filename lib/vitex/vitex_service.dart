@@ -324,8 +324,11 @@ class VitexService {
   Future<SnapshotBlock> getSnapshotBlockBeforeTime(int time) =>
       client.getSnapshotBlockBeforeTime(time);
 
-  Future<int> getChainHeightByAddressAndTime(Address address, int time) async {
-    var snapshotBlock = await client.getSnapshotBlockBeforeTime(time);
+  Future<int> getSnapshotHeightFor({
+    required Address address,
+    required int timestamp,
+  }) async {
+    var snapshotBlock = await client.getSnapshotBlockBeforeTime(timestamp);
     int endHeight = snapshotBlock.height;
 
     while (true && endHeight > 1) {

@@ -42,3 +42,13 @@ extension LedgerExt on ViteClient {
   Future<SnapshotBlock> getSnapshotBlockBeforeTime(int time) =>
       api.getSnapshotBlockBeforeTime(time);
 }
+
+extension SbpStatsExt on ViteClient {
+  Future<int> getCurrentCycle() =>
+      api.makeTypedRpcCall('sbpstats_time2Index', [null, 2]);
+
+  Future<TimeRange> getTimeRangeForCycle(int cycle) {
+    typeMapping[TimeRange] = TimeRange.fromJson;
+    return api.makeTypedRpcCall('sbpstats_index2Time', [cycle, 2]);
+  }
+}

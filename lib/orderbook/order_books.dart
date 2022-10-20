@@ -54,6 +54,9 @@ class OrderBooks implements BlockEventHandler {
       if (book.orders.isEmpty || book.blockHeight == 0) {
         continue;
       }
+      if (_currentHeight < book.blockHeight) {
+        _currentHeight = book.blockHeight;
+      }
       final orderBook = OrderBook(
         orders: book.orders,
         blockHeight: book.blockHeight,
