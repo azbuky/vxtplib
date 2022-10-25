@@ -156,8 +156,16 @@ Future<DistributionLog> distributeRewards({
   final client = service.client;
   final tokenId = rewards.config.rewardToken.tokenId;
   final tokenInfo = await client.getTokenInfo(tokenId);
-  final logs = <String, SendLog>{};
 
+  // Check account has enough balance
+  final totalRewards = rewards.totalRewards.totalReward;
+  final accountInfo = await client.getAccountInfo(account);
+  final balanceInfo = accountInfo.balances[tokenId];
+  if (balanceInfo == null || balanceInfo.value < totalRewards) {
+    throw Exception('Account balance does not cover total rewards');
+  }
+
+  final logs = <String, SendLog>{};
   for (final reward in rewards.rewards) {
     final amount = Amount.value(reward.totalReward, tokenInfo: tokenInfo);
     try {
