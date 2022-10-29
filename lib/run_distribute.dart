@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:vite/vite.dart';
 
@@ -98,10 +99,12 @@ Future<void> runDistribute({
   );
 
   print('Generating reports');
+  final formatter = DateFormat('yyyy-MM-dd_hh-mm-ss');
   final now = DateTime.now().toUtc();
+  final nowStr = '${formatter.format(now)}Z';
   final nowTimestamp = now.microsecondsSinceEpoch ~/ 1000;
   final outputPath = 'results';
-  final runPath = '$nowTimestamp($now)';
+  final runPath = '$nowTimestamp($nowStr)';
 
   final scanResultsPath = path.join(
     outputPath,
@@ -140,7 +143,7 @@ Future<void> runDistribute({
 
     final logPath = path.join(
       outputPath,
-      '$nowTimestamp($now)',
+      runPath,
       'distribution_log_${cycle.start}_${cycle.end}.json',
     );
     print('Writing distribution log to $logPath');

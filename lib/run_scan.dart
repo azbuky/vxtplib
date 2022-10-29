@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:vite/vite.dart';
 
@@ -46,10 +47,12 @@ Future<void> runScan({
     );
 
     print('Generating reports');
+    final formatter = DateFormat('yyyy-MM-dd_hh-mm-ss');
     final now = DateTime.now().toUtc();
+    final nowStr = '${formatter.format(now)}Z';
     final nowTimestamp = now.microsecondsSinceEpoch ~/ 1000;
     final outputPath = 'results';
-    final runPath = '$nowTimestamp($now)';
+    final runPath = '$nowTimestamp($nowStr)';
 
     final scanResultsPath = path.join(
       outputPath,
