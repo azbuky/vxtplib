@@ -58,7 +58,7 @@ class DistributeCommand extends Command {
     }
 
     return runDistribute(
-      node: args['node'] ?? 'https://localhost:48132',
+      node: args['node'] ?? 'http://localhost:48132',
       pow: args['pow'],
       cycleIndex: cycleIndex,
       configPath: args['config'] ?? path.join('config', 'config.json'),
