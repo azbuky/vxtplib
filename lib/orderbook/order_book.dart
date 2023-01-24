@@ -115,9 +115,9 @@ class OrderBook extends OrderBookBase {
 
     orders.remove(orderId);
     if (order.side) {
-      sells.remove(order);
+      sells.removeWhere((sell) => sell.orderId == orderId);
     } else {
-      buys.remove(order);
+      buys.removeWhere((buy) => buy.orderId == orderId);
     }
   }
 
