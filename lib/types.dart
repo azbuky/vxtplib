@@ -890,12 +890,20 @@ class ScanResults with _$ScanResults {
       _$ScanResultsFromJson(json);
 }
 
+@freezed
+class TimeDistance with _$TimeDistance {
+  const factory TimeDistance({
+    required int timeLength,
+    required Decimal orderDistance,
+  }) = _TimeDistance;
+}
+
 @unfreezed
 class RestingOrderStats with _$RestingOrderStats {
   factory RestingOrderStats({
     required final RestingOrder restingOrder,
     required int deltaTimestamp,
-    required int qualifyingTimeLength,
+    required List<TimeDistance> qualifyingTimeDistance,
   }) = _RestingOrderStats;
 }
 

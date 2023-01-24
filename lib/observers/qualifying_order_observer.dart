@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:decimal/decimal.dart';
 
 import '../orderbook/order_book.dart';
@@ -16,7 +18,7 @@ class QualifyingOrderObserver extends OrderEventHandleObserver {
       final stat = RestingOrderStats(
         restingOrder: order,
         deltaTimestamp: order.startTimestamp,
-        qualifyingTimeLength: 0,
+        qualifyingTimeDistance: [],
       );
       stats.add(stat);
     }
@@ -39,15 +41,29 @@ class QualifyingOrderObserver extends OrderEventHandleObserver {
       if (side == OrderSide.buy) {
         final orderDistance = ((sell1Price - orderPrice) / sell1Price)
             .toDecimal(scaleOnInfinitePrecision: 8);
-        if (orderDistance < config.orderDistanceThreshold) {
-          stat.qualifyingTimeLength += (timestamp - stat.deltaTimestamp);
+
+        if (orderDistance > Decimal.zero &&
+            orderDistance < config.orderDistanceThreshold) {
+          stat.qualifyingTimeDistance.add(
+            TimeDistance(
+              timeLength: timestamp - stat.deltaTimestamp,
+              orderDistance: orderDistance,
+            ),
+          );
         }
         stat.deltaTimestamp = timestamp;
       } else {
         final orderDistance = ((orderPrice - buy1Price) / buy1Price)
             .toDecimal(scaleOnInfinitePrecision: 8);
-        if (orderDistance < config.orderDistanceThreshold) {
-          stat.qualifyingTimeLength += (timestamp - stat.deltaTimestamp);
+
+        if (orderDistance > Decimal.zero &&
+            orderDistance < config.orderDistanceThreshold) {
+          stat.qualifyingTimeDistance.add(
+            TimeDistance(
+              timeLength: timestamp - stat.deltaTimestamp,
+              orderDistance: orderDistance,
+            ),
+          );
         }
         stat.deltaTimestamp = timestamp;
       }
@@ -55,14 +71,29 @@ class QualifyingOrderObserver extends OrderEventHandleObserver {
   }
 
   List<QualifyingOrder> getQualifyingRestingOrders() {
-    return stats.where((element) => element.qualifyingTimeLength > 0).map((e) {
-      final weight =
-          e.restingOrder.amount * Decimal.fromInt(e.qualifyingTimeLength);
+    final qualifying = stats
+        .where((element) => element.qualifyingTimeDistance.isNotEmpty)
+        .map((e) {
+      final totalWeight = e.qualifyingTimeDistance.fold<Decimal>(Decimal.zero,
+          (previousValue, element) {
+        final exponent = Decimal.one +
+            (Decimal.fromInt(9) *
+                    element.orderDistance /
+                    config.orderDistanceThreshold)
+                .toDecimal(scaleOnInfinitePrecision: 8);
+        final weight = e.restingOrder.amount *
+            Decimal.fromInt(element.timeLength) *
+            Decimal.parse(pow(0.6, exponent.toDouble()).toString());
+        return previousValue + weight;
+      });
+
       return QualifyingOrder(
         order: e.restingOrder,
-        weight: weight,
+        weight: totalWeight,
       );
     }).toList(growable: false);
+
+    return qualifying;
   }
 
   void end(OrderBook book, int timestamp) {
@@ -82,9 +113,6 @@ class QualifyingOrderObserver extends OrderEventHandleObserver {
   @override
   void beforeOnward(OrderBook book, OrderEvent event) {
     if (event.type == EventType.tx || event.type == EventType.unknown) {
-      return;
-    }
-    if (config.tradingPair != event.tradePair) {
       return;
     }
 

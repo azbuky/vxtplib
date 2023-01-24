@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'types.dart';
 
@@ -1968,6 +1968,7 @@ class _$_Tokens extends _Tokens {
   final Map<String, TokenInfo> _tokenMap;
   @override
   Map<String, TokenInfo> get tokenMap {
+    if (_tokenMap is EqualUnmodifiableMapView) return _tokenMap;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_tokenMap);
   }
@@ -2139,6 +2140,7 @@ class _$_BlockEvent extends _BlockEvent {
   final List<OrderEvent> _orderEvents;
   @override
   List<OrderEvent> get orderEvents {
+    if (_orderEvents is EqualUnmodifiableListView) return _orderEvents;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_orderEvents);
   }
@@ -3617,6 +3619,7 @@ class _$_CurrentOrderBookInfo implements _CurrentOrderBookInfo {
   @override
   @JsonKey()
   List<CurrentOrder> get orders {
+    if (_orders is EqualUnmodifiableListView) return _orders;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_orders);
   }
@@ -3763,6 +3766,7 @@ class _$_OrderBookInfo implements _OrderBookInfo {
   @override
   @JsonKey()
   List<OrderModel> get orders {
+    if (_orders is EqualUnmodifiableListView) return _orders;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_orders);
   }
@@ -3973,6 +3977,7 @@ class _$_OrdersResponse implements _OrdersResponse {
   @override
   @JsonKey()
   List<CurrentOrder> get orders {
+    if (_orders is EqualUnmodifiableListView) return _orders;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_orders);
   }
@@ -6009,6 +6014,7 @@ class _$_MarketResults implements _MarketResults {
   final List<UserTrade> _userTrades;
   @override
   List<UserTrade> get userTrades {
+    if (_userTrades is EqualUnmodifiableListView) return _userTrades;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_userTrades);
   }
@@ -6016,6 +6022,7 @@ class _$_MarketResults implements _MarketResults {
   final List<RestingOrder> _restingOrders;
   @override
   List<RestingOrder> get restingOrders {
+    if (_restingOrders is EqualUnmodifiableListView) return _restingOrders;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_restingOrders);
   }
@@ -6200,6 +6207,7 @@ class _$_ScanResults implements _ScanResults {
   final Map<String, MarketResults> _markets;
   @override
   Map<String, MarketResults> get markets {
+    if (_markets is EqualUnmodifiableMapView) return _markets;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_markets);
   }
@@ -6256,12 +6264,153 @@ abstract class _ScanResults implements ScanResults {
 }
 
 /// @nodoc
+mixin _$TimeDistance {
+  int get timeLength => throw _privateConstructorUsedError;
+  Decimal get orderDistance => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $TimeDistanceCopyWith<TimeDistance> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TimeDistanceCopyWith<$Res> {
+  factory $TimeDistanceCopyWith(
+          TimeDistance value, $Res Function(TimeDistance) then) =
+      _$TimeDistanceCopyWithImpl<$Res, TimeDistance>;
+  @useResult
+  $Res call({int timeLength, Decimal orderDistance});
+}
+
+/// @nodoc
+class _$TimeDistanceCopyWithImpl<$Res, $Val extends TimeDistance>
+    implements $TimeDistanceCopyWith<$Res> {
+  _$TimeDistanceCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? timeLength = null,
+    Object? orderDistance = null,
+  }) {
+    return _then(_value.copyWith(
+      timeLength: null == timeLength
+          ? _value.timeLength
+          : timeLength // ignore: cast_nullable_to_non_nullable
+              as int,
+      orderDistance: null == orderDistance
+          ? _value.orderDistance
+          : orderDistance // ignore: cast_nullable_to_non_nullable
+              as Decimal,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_TimeDistanceCopyWith<$Res>
+    implements $TimeDistanceCopyWith<$Res> {
+  factory _$$_TimeDistanceCopyWith(
+          _$_TimeDistance value, $Res Function(_$_TimeDistance) then) =
+      __$$_TimeDistanceCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int timeLength, Decimal orderDistance});
+}
+
+/// @nodoc
+class __$$_TimeDistanceCopyWithImpl<$Res>
+    extends _$TimeDistanceCopyWithImpl<$Res, _$_TimeDistance>
+    implements _$$_TimeDistanceCopyWith<$Res> {
+  __$$_TimeDistanceCopyWithImpl(
+      _$_TimeDistance _value, $Res Function(_$_TimeDistance) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? timeLength = null,
+    Object? orderDistance = null,
+  }) {
+    return _then(_$_TimeDistance(
+      timeLength: null == timeLength
+          ? _value.timeLength
+          : timeLength // ignore: cast_nullable_to_non_nullable
+              as int,
+      orderDistance: null == orderDistance
+          ? _value.orderDistance
+          : orderDistance // ignore: cast_nullable_to_non_nullable
+              as Decimal,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_TimeDistance implements _TimeDistance {
+  const _$_TimeDistance(
+      {required this.timeLength, required this.orderDistance});
+
+  @override
+  final int timeLength;
+  @override
+  final Decimal orderDistance;
+
+  @override
+  String toString() {
+    return 'TimeDistance(timeLength: $timeLength, orderDistance: $orderDistance)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_TimeDistance &&
+            (identical(other.timeLength, timeLength) ||
+                other.timeLength == timeLength) &&
+            (identical(other.orderDistance, orderDistance) ||
+                other.orderDistance == orderDistance));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, timeLength, orderDistance);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_TimeDistanceCopyWith<_$_TimeDistance> get copyWith =>
+      __$$_TimeDistanceCopyWithImpl<_$_TimeDistance>(this, _$identity);
+}
+
+abstract class _TimeDistance implements TimeDistance {
+  const factory _TimeDistance(
+      {required final int timeLength,
+      required final Decimal orderDistance}) = _$_TimeDistance;
+
+  @override
+  int get timeLength;
+  @override
+  Decimal get orderDistance;
+  @override
+  @JsonKey(ignore: true)
+  _$$_TimeDistanceCopyWith<_$_TimeDistance> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$RestingOrderStats {
   RestingOrder get restingOrder => throw _privateConstructorUsedError;
   int get deltaTimestamp => throw _privateConstructorUsedError;
-  set deltaTimestamp(int value) => throw _privateConstructorUsedError;
-  int get qualifyingTimeLength => throw _privateConstructorUsedError;
-  set qualifyingTimeLength(int value) => throw _privateConstructorUsedError;
+  set deltaTimestamp(int value) =>
+      throw _privateConstructorUsedError; //required int qualifyingTimeLength,
+  List<TimeDistance> get qualifyingTimeDistance =>
+      throw _privateConstructorUsedError; //required int qualifyingTimeLength,
+  set qualifyingTimeDistance(List<TimeDistance> value) =>
+      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $RestingOrderStatsCopyWith<RestingOrderStats> get copyWith =>
@@ -6277,7 +6426,7 @@ abstract class $RestingOrderStatsCopyWith<$Res> {
   $Res call(
       {RestingOrder restingOrder,
       int deltaTimestamp,
-      int qualifyingTimeLength});
+      List<TimeDistance> qualifyingTimeDistance});
 
   $RestingOrderCopyWith<$Res> get restingOrder;
 }
@@ -6297,7 +6446,7 @@ class _$RestingOrderStatsCopyWithImpl<$Res, $Val extends RestingOrderStats>
   $Res call({
     Object? restingOrder = null,
     Object? deltaTimestamp = null,
-    Object? qualifyingTimeLength = null,
+    Object? qualifyingTimeDistance = null,
   }) {
     return _then(_value.copyWith(
       restingOrder: null == restingOrder
@@ -6308,10 +6457,10 @@ class _$RestingOrderStatsCopyWithImpl<$Res, $Val extends RestingOrderStats>
           ? _value.deltaTimestamp
           : deltaTimestamp // ignore: cast_nullable_to_non_nullable
               as int,
-      qualifyingTimeLength: null == qualifyingTimeLength
-          ? _value.qualifyingTimeLength
-          : qualifyingTimeLength // ignore: cast_nullable_to_non_nullable
-              as int,
+      qualifyingTimeDistance: null == qualifyingTimeDistance
+          ? _value.qualifyingTimeDistance
+          : qualifyingTimeDistance // ignore: cast_nullable_to_non_nullable
+              as List<TimeDistance>,
     ) as $Val);
   }
 
@@ -6335,7 +6484,7 @@ abstract class _$$_RestingOrderStatsCopyWith<$Res>
   $Res call(
       {RestingOrder restingOrder,
       int deltaTimestamp,
-      int qualifyingTimeLength});
+      List<TimeDistance> qualifyingTimeDistance});
 
   @override
   $RestingOrderCopyWith<$Res> get restingOrder;
@@ -6354,7 +6503,7 @@ class __$$_RestingOrderStatsCopyWithImpl<$Res>
   $Res call({
     Object? restingOrder = null,
     Object? deltaTimestamp = null,
-    Object? qualifyingTimeLength = null,
+    Object? qualifyingTimeDistance = null,
   }) {
     return _then(_$_RestingOrderStats(
       restingOrder: null == restingOrder
@@ -6365,10 +6514,10 @@ class __$$_RestingOrderStatsCopyWithImpl<$Res>
           ? _value.deltaTimestamp
           : deltaTimestamp // ignore: cast_nullable_to_non_nullable
               as int,
-      qualifyingTimeLength: null == qualifyingTimeLength
-          ? _value.qualifyingTimeLength
-          : qualifyingTimeLength // ignore: cast_nullable_to_non_nullable
-              as int,
+      qualifyingTimeDistance: null == qualifyingTimeDistance
+          ? _value.qualifyingTimeDistance
+          : qualifyingTimeDistance // ignore: cast_nullable_to_non_nullable
+              as List<TimeDistance>,
     ));
   }
 }
@@ -6379,18 +6528,19 @@ class _$_RestingOrderStats implements _RestingOrderStats {
   _$_RestingOrderStats(
       {required this.restingOrder,
       required this.deltaTimestamp,
-      required this.qualifyingTimeLength});
+      required this.qualifyingTimeDistance});
 
   @override
   final RestingOrder restingOrder;
   @override
   int deltaTimestamp;
+//required int qualifyingTimeLength,
   @override
-  int qualifyingTimeLength;
+  List<TimeDistance> qualifyingTimeDistance;
 
   @override
   String toString() {
-    return 'RestingOrderStats(restingOrder: $restingOrder, deltaTimestamp: $deltaTimestamp, qualifyingTimeLength: $qualifyingTimeLength)';
+    return 'RestingOrderStats(restingOrder: $restingOrder, deltaTimestamp: $deltaTimestamp, qualifyingTimeDistance: $qualifyingTimeDistance)';
   }
 
   @JsonKey(ignore: true)
@@ -6403,18 +6553,20 @@ class _$_RestingOrderStats implements _RestingOrderStats {
 
 abstract class _RestingOrderStats implements RestingOrderStats {
   factory _RestingOrderStats(
-      {required final RestingOrder restingOrder,
-      required int deltaTimestamp,
-      required int qualifyingTimeLength}) = _$_RestingOrderStats;
+          {required final RestingOrder restingOrder,
+          required int deltaTimestamp,
+          required List<TimeDistance> qualifyingTimeDistance}) =
+      _$_RestingOrderStats;
 
   @override
   RestingOrder get restingOrder;
   @override
   int get deltaTimestamp;
   set deltaTimestamp(int value);
-  @override
-  int get qualifyingTimeLength;
-  set qualifyingTimeLength(int value);
+  @override //required int qualifyingTimeLength,
+  List<TimeDistance>
+      get qualifyingTimeDistance; //required int qualifyingTimeLength,
+  set qualifyingTimeDistance(List<TimeDistance> value);
   @override
   @JsonKey(ignore: true)
   _$$_RestingOrderStatsCopyWith<_$_RestingOrderStats> get copyWith =>
@@ -6953,6 +7105,7 @@ class _$_CycleRewards implements _CycleRewards {
   final List<UserReward> _rewards;
   @override
   List<UserReward> get rewards {
+    if (_rewards is EqualUnmodifiableListView) return _rewards;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_rewards);
   }
@@ -7521,6 +7674,7 @@ class _$_DistributionLog implements _DistributionLog {
   final Map<String, SendLog> _logs;
   @override
   Map<String, SendLog> get logs {
+    if (_logs is EqualUnmodifiableMapView) return _logs;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_logs);
   }
