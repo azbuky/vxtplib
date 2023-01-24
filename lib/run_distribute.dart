@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:vite/vite.dart';
 
+import 'delta_timer.dart';
 import 'distribute.dart';
 import 'output.dart';
 import 'recover.dart';
@@ -21,6 +22,7 @@ Future<void> runDistribute({
   required String configPath,
   required bool isDryRun,
 }) async {
+  final timer = DeltaTimer();
   final service = getServiceForNodeUri(node);
   final powService = pow != null ? getServiceForNodeUri(pow) : null;
   final configWithSeed = getRewardsConfig(configPath);
@@ -49,6 +51,7 @@ Future<void> runDistribute({
   }
 
   final tradePairs = getTradePairs([config.tradingPair], tokens);
+  timer.delta('Init');
 
   print('Recovering order books');
   final recoverResults = await recover(
@@ -63,6 +66,8 @@ Future<void> runDistribute({
   final startHeight = stream.startHeight;
   final endHeight = stream.endHeight;
 
+  timer.delta('Order books recover');
+
   print('Scanning height range $startHeight - $endHeight');
   final scanResults = await scan(
     orderBooks: orderBooks,
@@ -71,12 +76,16 @@ Future<void> runDistribute({
     cycle: cycle,
   );
 
+  timer.delta('Scan');
+
   // rewind order books
   print('Rewinding order books');
   stream.travel(
     orderBooks,
     inReverse: true,
   );
+
+  timer.delta('Order books rewind');
 
   final marketResults = scanResults.markets.values.first;
   final userTrades = marketResults.userTrades;
@@ -89,6 +98,8 @@ Future<void> runDistribute({
     cycle: cycle,
   );
 
+  timer.delta('Qualifying limit orders');
+
   print('Computing rewards');
   final cycleRewards = await computeRewards(
     cycle: cycle,
@@ -97,6 +108,8 @@ Future<void> runDistribute({
     userTrades: userTrades,
     restingOrders: restingOrders,
   );
+
+  timer.delta('Computing rewards');
 
   print('Generating reports');
   final formatter = DateFormat('yyyy-MM-dd_hh-mm-ss');
@@ -123,6 +136,8 @@ Future<void> runDistribute({
   print('Exporting cycle rewards to $rewardsPath');
   final rewardsContents = prettyPrintJson(cycleRewards.toJson());
   await writeToFile(path: rewardsPath, contents: rewardsContents);
+
+  timer.delta('Writing reports');
 
   if (!isDryRun && seedPhrase != null) {
     final wallet = Wallet.forMnemonic(seedPhrase);
@@ -152,6 +167,11 @@ Future<void> runDistribute({
   } else {
     final reason = isDryRun ? 'dry run' : 'missing seedPhrase';
     print('Skipping rewards distribution ($reason)');
+  }
+
+  for (final delta in timer.deltas) {
+    print(
+        '${delta.tag.padRight(25)} ${delta.time.toStringAsFixed(6).padLeft(10)}s');
   }
 
   await client.close();
