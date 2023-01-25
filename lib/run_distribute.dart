@@ -30,7 +30,9 @@ Future<void> runDistribute({
 
   final seedPhrase =
       configWithSeed.seedPhrase ?? Platform.environment['SEED_PHRASE'];
+
   final config = configWithSeed.copyWith(seedPhrase: null);
+  final addressIndex = config.addressIndex;
 
   cycleIndex ??= await client.getCurrentCycle() - 1;
 
@@ -141,13 +143,14 @@ Future<void> runDistribute({
 
   if (!isDryRun && seedPhrase != null) {
     final wallet = Wallet.forMnemonic(seedPhrase);
-    final signer = SimpleSigner(wallet, 1);
+    final signer = SimpleSigner(wallet, addressIndex + 1);
     final accountService = AccountService(
       signer: signer,
       client: client,
       powClient: powService != null ? ViteClient(powService) : null,
     );
-    final account = Address.fromPublicKey(wallet.deriveKeyPair(0).publicKey);
+    final account =
+        Address.fromPublicKey(wallet.deriveKeyPair(addressIndex).publicKey);
 
     print('Distributing rewards');
     final log = await distributeRewards(
@@ -174,6 +177,7 @@ Future<void> runDistribute({
         '${delta.tag.padRight(25)} ${delta.time.toStringAsFixed(6).padLeft(10)}s');
   }
 
+  await powService?.close();
   await client.close();
   print('Done!');
 }

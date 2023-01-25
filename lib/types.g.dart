@@ -186,6 +186,7 @@ const _$TraderSideEnumMap = {
 
 _$_RewardsConfig _$$_RewardsConfigFromJson(Map json) => _$_RewardsConfig(
       seedPhrase: json['seedPhrase'] as String?,
+      addressIndex: json['addressIndex'] ?? 0,
       rewardToken: Token.fromJson(json['rewardToken'] as String),
       tradingReward: Decimal.fromJson(json['tradingReward'] as String),
       limitOrderReward: Decimal.fromJson(json['limitOrderReward'] as String),
@@ -197,6 +198,7 @@ _$_RewardsConfig _$$_RewardsConfigFromJson(Map json) => _$_RewardsConfig(
 Map<String, dynamic> _$$_RewardsConfigToJson(_$_RewardsConfig instance) =>
     <String, dynamic>{
       'seedPhrase': instance.seedPhrase,
+      'addressIndex': instance.addressIndex,
       'rewardToken': instance.rewardToken.toJson(),
       'tradingReward': instance.tradingReward.toJson(),
       'limitOrderReward': instance.limitOrderReward.toJson(),

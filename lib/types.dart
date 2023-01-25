@@ -779,6 +779,7 @@ class RewardsConfig with _$RewardsConfig {
   @JsonSerializable(includeIfNull: true)
   const factory RewardsConfig({
     String? seedPhrase,
+    @Default(0) addressIndex,
     required Token rewardToken,
     required Decimal tradingReward,
     required Decimal limitOrderReward,

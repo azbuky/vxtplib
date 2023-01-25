@@ -5093,6 +5093,7 @@ RewardsConfig _$RewardsConfigFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$RewardsConfig {
   String? get seedPhrase => throw _privateConstructorUsedError;
+  dynamic get addressIndex => throw _privateConstructorUsedError;
   Token get rewardToken => throw _privateConstructorUsedError;
   Decimal get tradingReward => throw _privateConstructorUsedError;
   Decimal get limitOrderReward => throw _privateConstructorUsedError;
@@ -5113,6 +5114,7 @@ abstract class $RewardsConfigCopyWith<$Res> {
   @useResult
   $Res call(
       {String? seedPhrase,
+      dynamic addressIndex,
       Token rewardToken,
       Decimal tradingReward,
       Decimal limitOrderReward,
@@ -5136,6 +5138,7 @@ class _$RewardsConfigCopyWithImpl<$Res, $Val extends RewardsConfig>
   @override
   $Res call({
     Object? seedPhrase = freezed,
+    Object? addressIndex = freezed,
     Object? rewardToken = null,
     Object? tradingReward = null,
     Object? limitOrderReward = null,
@@ -5147,6 +5150,10 @@ class _$RewardsConfigCopyWithImpl<$Res, $Val extends RewardsConfig>
           ? _value.seedPhrase
           : seedPhrase // ignore: cast_nullable_to_non_nullable
               as String?,
+      addressIndex: freezed == addressIndex
+          ? _value.addressIndex
+          : addressIndex // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       rewardToken: null == rewardToken
           ? _value.rewardToken
           : rewardToken // ignore: cast_nullable_to_non_nullable
@@ -5189,6 +5196,7 @@ abstract class _$$_RewardsConfigCopyWith<$Res>
   @useResult
   $Res call(
       {String? seedPhrase,
+      dynamic addressIndex,
       Token rewardToken,
       Decimal tradingReward,
       Decimal limitOrderReward,
@@ -5211,6 +5219,7 @@ class __$$_RewardsConfigCopyWithImpl<$Res>
   @override
   $Res call({
     Object? seedPhrase = freezed,
+    Object? addressIndex = freezed,
     Object? rewardToken = null,
     Object? tradingReward = null,
     Object? limitOrderReward = null,
@@ -5222,6 +5231,8 @@ class __$$_RewardsConfigCopyWithImpl<$Res>
           ? _value.seedPhrase
           : seedPhrase // ignore: cast_nullable_to_non_nullable
               as String?,
+      addressIndex:
+          freezed == addressIndex ? _value.addressIndex! : addressIndex,
       rewardToken: null == rewardToken
           ? _value.rewardToken
           : rewardToken // ignore: cast_nullable_to_non_nullable
@@ -5252,6 +5263,7 @@ class __$$_RewardsConfigCopyWithImpl<$Res>
 class _$_RewardsConfig implements _RewardsConfig {
   const _$_RewardsConfig(
       {this.seedPhrase,
+      this.addressIndex = 0,
       required this.rewardToken,
       required this.tradingReward,
       required this.limitOrderReward,
@@ -5263,6 +5275,9 @@ class _$_RewardsConfig implements _RewardsConfig {
 
   @override
   final String? seedPhrase;
+  @override
+  @JsonKey()
+  final dynamic addressIndex;
   @override
   final Token rewardToken;
   @override
@@ -5276,7 +5291,7 @@ class _$_RewardsConfig implements _RewardsConfig {
 
   @override
   String toString() {
-    return 'RewardsConfig(seedPhrase: $seedPhrase, rewardToken: $rewardToken, tradingReward: $tradingReward, limitOrderReward: $limitOrderReward, orderDistanceThreshold: $orderDistanceThreshold, tradingPair: $tradingPair)';
+    return 'RewardsConfig(seedPhrase: $seedPhrase, addressIndex: $addressIndex, rewardToken: $rewardToken, tradingReward: $tradingReward, limitOrderReward: $limitOrderReward, orderDistanceThreshold: $orderDistanceThreshold, tradingPair: $tradingPair)';
   }
 
   @override
@@ -5286,6 +5301,8 @@ class _$_RewardsConfig implements _RewardsConfig {
             other is _$_RewardsConfig &&
             (identical(other.seedPhrase, seedPhrase) ||
                 other.seedPhrase == seedPhrase) &&
+            const DeepCollectionEquality()
+                .equals(other.addressIndex, addressIndex) &&
             (identical(other.rewardToken, rewardToken) ||
                 other.rewardToken == rewardToken) &&
             (identical(other.tradingReward, tradingReward) ||
@@ -5300,8 +5317,15 @@ class _$_RewardsConfig implements _RewardsConfig {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, seedPhrase, rewardToken,
-      tradingReward, limitOrderReward, orderDistanceThreshold, tradingPair);
+  int get hashCode => Object.hash(
+      runtimeType,
+      seedPhrase,
+      const DeepCollectionEquality().hash(addressIndex),
+      rewardToken,
+      tradingReward,
+      limitOrderReward,
+      orderDistanceThreshold,
+      tradingPair);
 
   @JsonKey(ignore: true)
   @override
@@ -5320,6 +5344,7 @@ class _$_RewardsConfig implements _RewardsConfig {
 abstract class _RewardsConfig implements RewardsConfig {
   const factory _RewardsConfig(
       {final String? seedPhrase,
+      final dynamic addressIndex,
       required final Token rewardToken,
       required final Decimal tradingReward,
       required final Decimal limitOrderReward,
@@ -5331,6 +5356,8 @@ abstract class _RewardsConfig implements RewardsConfig {
 
   @override
   String? get seedPhrase;
+  @override
+  dynamic get addressIndex;
   @override
   Token get rewardToken;
   @override
@@ -6405,10 +6432,9 @@ abstract class _TimeDistance implements TimeDistance {
 mixin _$RestingOrderStats {
   RestingOrder get restingOrder => throw _privateConstructorUsedError;
   int get deltaTimestamp => throw _privateConstructorUsedError;
-  set deltaTimestamp(int value) =>
-      throw _privateConstructorUsedError; //required int qualifyingTimeLength,
+  set deltaTimestamp(int value) => throw _privateConstructorUsedError;
   List<TimeDistance> get qualifyingTimeDistance =>
-      throw _privateConstructorUsedError; //required int qualifyingTimeLength,
+      throw _privateConstructorUsedError;
   set qualifyingTimeDistance(List<TimeDistance> value) =>
       throw _privateConstructorUsedError;
 
@@ -6534,7 +6560,6 @@ class _$_RestingOrderStats implements _RestingOrderStats {
   final RestingOrder restingOrder;
   @override
   int deltaTimestamp;
-//required int qualifyingTimeLength,
   @override
   List<TimeDistance> qualifyingTimeDistance;
 
@@ -6563,9 +6588,8 @@ abstract class _RestingOrderStats implements RestingOrderStats {
   @override
   int get deltaTimestamp;
   set deltaTimestamp(int value);
-  @override //required int qualifyingTimeLength,
-  List<TimeDistance>
-      get qualifyingTimeDistance; //required int qualifyingTimeLength,
+  @override
+  List<TimeDistance> get qualifyingTimeDistance;
   set qualifyingTimeDistance(List<TimeDistance> value);
   @override
   @JsonKey(ignore: true)
